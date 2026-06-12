@@ -5,6 +5,7 @@ Opens the webcam, identifies a single student via face recognition,
 displays their information, and exits after a successful match.
 """
 
+import json
 import os
 import pickle
 
@@ -12,7 +13,6 @@ import cv2
 import cvzone
 import face_recognition
 import numpy as np
-from datetime import datetime
 
 from firebase_config import initialize_firebase
 
@@ -111,12 +111,15 @@ while True:
             counter += 1
             if counter == 4:
                 print(
-                    f"{student_id}  {studentInfo['name']}  "
-                    f"{studentInfo['total_attendance']}  "
-                    f"{studentInfo['standing']}  "
-                    f"{studentInfo['year']}  "
-                    f"{studentInfo['starting_year']}  "
-                    f"{studentInfo['last_attendance_time']}"
+                    json.dumps({
+                        "id": student_id,
+                        "name": studentInfo.get('name'),
+                        "total_attendance": studentInfo.get('total_attendance'),
+                        "standing": studentInfo.get('standing'),
+                        "year": studentInfo.get('year'),
+                        "starting_year": studentInfo.get('starting_year'),
+                        "last_attendance_time": studentInfo.get('last_attendance_time')
+                    })
                 )
 
     if counter == 5:

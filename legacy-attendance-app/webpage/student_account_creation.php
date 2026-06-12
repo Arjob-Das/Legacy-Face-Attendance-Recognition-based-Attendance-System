@@ -80,30 +80,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $tad=intval($_POST["tad"]);
 
 
-    $target_dir = "C:/xampp/htdocs/legacy-attendance-app/webpage/Images";
-    $target_file = $target_dir.basename($_FILES["fileToUpload"]["name"]);
-    $uploadOk = 1;
-    $ext = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-if ($ext !== 'gif' && $ext !== 'png' && $ext !== 'jpg'&& $ext !== 'jpeg') {
-    $uploadOk=0;
-}
-    if ($uploadOk == 0) {
-        exit ('<script>alert("Sorry, your file was not uploaded due to type mismatch.")</script>');
-    // if everything is ok, try to upload file
-    } else {
-    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        echo '<script>alert("The file has been uploaded.")</script>'; 
-    } else {
-        echo '<script>alert ("Sorry, there was an error uploading your file.")</script>';
+    $target_dir = __DIR__ . "/Images/";
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true);
     }
-    rename($target_file,"$target_dir/$id.jpg");
-}
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $ext = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-        $command_exec = escapeshellcmd("python adddata.py $fname $lname $id $cyr $styr $standing $tad $major");
-        $str_output = shell_exec($command_exec);
-        $command_exec = escapeshellcmd("python image_uploader.py");
-        $str_output = shell_exec($command_exec);
+    if ($ext !== 'gif' && $ext !== 'png' && $ext !== 'jpg' && $ext !== 'jpeg') {
+        $uploadOk = 0;
+    }
+    if ($uploadOk == 0) {
+        exit('<script>alert("Sorry, your file was not uploaded due to type mismatch.")</script>');
+    } else {
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+            echo '<script>alert("The file has been uploaded.")</script>'; 
+        } else {
+            echo '<script>alert("Sorry, there was an error uploading your file.")</script>';
+        }
+        rename($target_file, $target_dir . $id . ".jpg");
+    }
 
+    $command_exec = "python adddata.py " . 
+                    escapeshellarg($fname) . " " . 
+                    escapeshellarg($lname) . " " . 
+                    escapeshellarg($id) . " " . 
+                    escapeshellarg($cyr) . " " . 
+                    escapeshellarg($styr) . " " . 
+                    escapeshellarg($standing) . " " . 
+                    escapeshellarg($tad) . " " . 
+                    escapeshellarg($major);
+    $str_output = shell_exec($command_exec);
+
+    $command_exec = "python image_uploader.py";
+    $str_output = shell_exec($command_exec);
 }
 ?>

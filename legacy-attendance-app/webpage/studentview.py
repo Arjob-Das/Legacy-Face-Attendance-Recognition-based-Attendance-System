@@ -4,6 +4,7 @@ Student Viewer.
 Queries and prints information for a specific student ID passed as a CLI argument.
 """
 
+import json
 import os
 import sys
 
@@ -27,10 +28,16 @@ try:
         sys.exit(1)
 
     print(
-        f"{student_id}  {studentInfo.get('name')}  "
-        f"{studentInfo.get('total_attendance')}  {studentInfo.get('standing')}  "
-        f"{studentInfo.get('major')}  {studentInfo.get('year')}  "
-        f"{studentInfo.get('starting_year')}  {studentInfo.get('last_attendance_time')}"
+        json.dumps({
+            "id": student_id,
+            "name": studentInfo.get('name'),
+            "total_attendance": studentInfo.get('total_attendance'),
+            "standing": studentInfo.get('standing'),
+            "major": studentInfo.get('major'),
+            "year": studentInfo.get('year'),
+            "starting_year": studentInfo.get('starting_year'),
+            "last_attendance_time": studentInfo.get('last_attendance_time')
+        })
     )
 except Exception as e:
     print(f"Error: {e}")

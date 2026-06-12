@@ -5,6 +5,7 @@ Checks webcam feed for a recognized teacher, prints their details, and exits.
 Aborts if no recognized face is found after 25 attempts.
 """
 
+import json
 import os
 import pickle
 import sys
@@ -85,7 +86,7 @@ while True:
         if counter == 0:
             no_face_counter += 1
             if no_face_counter == 25:
-                print("Login Not Verified")
+                print(json.dumps({"error": "Login Not Verified"}))
                 break
 
         elif 0 < counter < 5:
@@ -120,10 +121,16 @@ while True:
 
             if counter == 4:
                 print(
-                    f"{teacher_uuid}  {teacherInfo.get('name')}  "
-                    f"{teacherInfo.get('total_attendance')}  {teacherInfo.get('assigned_class')}  "
-                    f"{teacherInfo.get('department')}  {teacherInfo.get('year')}  "
-                    f"{teacherInfo.get('starting_year')}  {teacherInfo.get('last_attendance_time')}"
+                    json.dumps({
+                        "id": teacher_uuid,
+                        "name": teacherInfo.get('name'),
+                        "total_attendance": teacherInfo.get('total_attendance'),
+                        "assigned_class": teacherInfo.get('assigned_class'),
+                        "department": teacherInfo.get('department'),
+                        "year": teacherInfo.get('year'),
+                        "starting_year": teacherInfo.get('starting_year'),
+                        "last_attendance_time": teacherInfo.get('last_attendance_time')
+                    })
                 )
 
     if counter == 5:

@@ -81,30 +81,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $tad=$_POST["tad"];
 
 
-    $target_dir = "C:/xampp/htdocs/legacy-attendance-app/webpage/ImagesT";
-    $target_file = $target_dir.basename($_FILES["fileToUpload"]["name"]);
-    $uploadOk = 1;
-    $ext = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-    if ($ext !== 'gif' && $ext !== 'png' && $ext !== 'jpg'&& $ext !== 'jpeg') {
-        $uploadOk=0;
+    $target_dir = __DIR__ . "/ImagesT/";
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true);
     }
-        if ($uploadOk == 0) {
-            exit ('<script>alert("Sorry, your file was not uploaded due to type mismatch.")</script>');
-        // if everything is ok, try to upload file
-        } else {
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $ext = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    if ($ext !== 'gif' && $ext !== 'png' && $ext !== 'jpg' && $ext !== 'jpeg') {
+        $uploadOk = 0;
+    }
+    if ($uploadOk == 0) {
+        exit('<script>alert("Sorry, your file was not uploaded due to type mismatch.")</script>');
+    } else {
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
             echo '<script>alert("The file has been uploaded.")</script>'; 
         } else {
-            echo '<script>alert ("Sorry, there was an error uploading your file.")</script>';
+            echo '<script>alert("Sorry, there was an error uploading your file.")</script>';
         }
-    rename($target_file,"$target_dir/$id.jpg");
-}
-    $command_exec = escapeshellcmd("python image_uploader_T.py");
+        rename($target_file, $target_dir . $id . ".jpg");
+    }
+
+    $command_exec = "python image_uploader_T.py";
     $str_output = shell_exec($command_exec);
     
-    $command_exec = escapeshellcmd("python adddatateacher.py $fname $lname $id $cyr $styr $assigned_class $tad $dept");
+    $command_exec = "python adddatateacher.py " . 
+                    escapeshellarg($fname) . " " . 
+                    escapeshellarg($lname) . " " . 
+                    escapeshellarg($id) . " " . 
+                    escapeshellarg($cyr) . " " . 
+                    escapeshellarg($styr) . " " . 
+                    escapeshellarg($assigned_class) . " " . 
+                    escapeshellarg($tad) . " " . 
+                    escapeshellarg($dept);
     $str_output = shell_exec($command_exec);
-
 }
 ?>
