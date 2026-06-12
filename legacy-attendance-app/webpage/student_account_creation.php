@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $tad=intval($_POST["tad"]);
 
 
-    $target_dir = "C:/xampp/htdocs/frat/webpage/Images";
+    $target_dir = "C:/xampp/htdocs/legacy-attendance-app/webpage/Images";
     $target_file = $target_dir.basename($_FILES["fileToUpload"]["name"]);
     $uploadOk = 1;
     $ext = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));

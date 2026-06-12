@@ -1,23 +1,25 @@
 """
-Face Recognition Login — single-face identification mode.
+Face Recognition Login (Teachers) — Web integration.
 
-Opens the webcam, identifies a single student via face recognition,
-displays their information, and exits after a successful match.
+Checks webcam feed for a recognized teacher, prints their details, and exits.
+Aborts if no recognized face is found after 25 attempts.
 """
 
 import os
 import pickle
+import sys
 
 import cv2
 import cvzone
 import face_recognition
 import numpy as np
-from datetime import datetime
 
+# Add parent directory to path to load centralized firebase_config
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from firebase_config import initialize_firebase
 
 # ── Firebase ────────────────────────────────────────────────────────
-db, bucket = initialize_firebase(include_storage=True)
+db_ref, bucket = initialize_firebase(include_storage=True, is_teacher=True)
 
 # ── Video capture ───────────────────────────────────────────────────
 cap = cv2.VideoCapture(0)
@@ -32,15 +34,16 @@ modePathList = os.listdir(FOLDER_MODE_PATH)
 imgModeList = [cv2.imread(os.path.join(FOLDER_MODE_PATH, path)) for path in modePathList]
 
 # ── Encoding file ───────────────────────────────────────────────────
-with open('EncodeFile.p', 'rb') as f:
+with open('EncodeFileT.p', 'rb') as f:
     encodeListKnownWithIds = pickle.load(f)
-encodeListKnown, studentIds = encodeListKnownWithIds
+encodeListKnown, teacherIds = encodeListKnownWithIds
 
 # ── State variables ─────────────────────────────────────────────────
 modeType = 0
 counter = 0
-student_id = -1
-imgStudent = []
+teacher_uuid = -1
+imgTeacher = []
+no_face_counter = 0
 
 # ── Main loop ───────────────────────────────────────────────────────
 while True:
@@ -70,7 +73,7 @@ while True:
                 y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
                 bbox = 55 + x1, 162 + y1, x2 - x1, y2 - y1
                 imgBackground = cvzone.cornerRect(imgBackground, bbox, rt=0)
-                student_id = studentIds[matchIndex]
+                teacher_uuid = teacherIds[matchIndex]
 
                 if counter == 0:
                     cvzone.putTextRect(imgBackground, "Loading", (275, 400))
@@ -79,44 +82,48 @@ while True:
                     counter = 1
                     modeType = 1
 
-        if counter < 5:
-            # Get the student data from Firebase
-            studentInfo = db.reference(f'Students/{student_id}').get()
+        if counter == 0:
+            no_face_counter += 1
+            if no_face_counter == 25:
+                print("Login Not Verified")
+                break
 
-            # Get the student image from storage
-            blob = bucket.get_blob(f'Images/{student_id}.jpg')
+        elif 0 < counter < 5:
+            # Fetch teacher data from Firebase
+            teacherInfo = db_ref(f'Teachers/{teacher_uuid}').get()
+
+            # Fetch image from Storage
+            blob = bucket.get_blob(f'ImagesT/{teacher_uuid}.jpg')
             array = np.frombuffer(blob.download_as_string(), np.uint8)
-            imgStudent = cv2.imdecode(array, cv2.IMREAD_COLOR)
+            imgTeacher = cv2.imdecode(array, cv2.IMREAD_COLOR)
 
             modeType = 1
             imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
 
-            cv2.putText(imgBackground, str(studentInfo['major']),
+            cv2.putText(imgBackground, str(teacherInfo.get('department')),
                         (1006, 550), cv2.FONT_HERSHEY_COMPLEX, 0.5,
                         (255, 255, 255), 1)
-            cv2.putText(imgBackground, str(student_id),
+            cv2.putText(imgBackground, str(teacher_uuid),
                         (1006, 493), cv2.FONT_HERSHEY_COMPLEX, 0.5,
                         (255, 255, 255), 1)
 
             (w, _), _ = cv2.getTextSize(
-                studentInfo['name'], cv2.FONT_HERSHEY_COMPLEX, 1, 1
+                teacherInfo.get('name', ''), cv2.FONT_HERSHEY_COMPLEX, 1, 1
             )
             offset = (414 - w) // 2
-            cv2.putText(imgBackground, str(studentInfo['name']),
+            cv2.putText(imgBackground, str(teacherInfo.get('name')),
                         (808 + offset, 445), cv2.FONT_HERSHEY_COMPLEX, 1,
                         (50, 50, 50), 1)
 
-            imgBackground[175:175 + 216, 909:909 + 216] = imgStudent
-
+            imgBackground[175:175 + 216, 909:909 + 216] = imgTeacher
             counter += 1
+
             if counter == 4:
                 print(
-                    f"{student_id}  {studentInfo['name']}  "
-                    f"{studentInfo['total_attendance']}  "
-                    f"{studentInfo['standing']}  "
-                    f"{studentInfo['year']}  "
-                    f"{studentInfo['starting_year']}  "
-                    f"{studentInfo['last_attendance_time']}"
+                    f"{teacher_uuid}  {teacherInfo.get('name')}  "
+                    f"{teacherInfo.get('total_attendance')}  {teacherInfo.get('assigned_class')}  "
+                    f"{teacherInfo.get('department')}  {teacherInfo.get('year')}  "
+                    f"{teacherInfo.get('starting_year')}  {teacherInfo.get('last_attendance_time')}"
                 )
 
     if counter == 5:

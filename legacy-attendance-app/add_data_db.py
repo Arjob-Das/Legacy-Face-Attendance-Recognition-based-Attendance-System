@@ -8,9 +8,9 @@ them to the Firebase Realtime Database under the Students/ node.
 from firebase_config import initialize_firebase
 
 # ── Firebase (no storage needed) ────────────────────────────────────
-db, _ = initialize_firebase(include_storage=False)
+db_ref, _ = initialize_firebase(include_storage=False)
 
-ref = db.reference('Students')
+ref = db_ref('Students')
 data = {}
 
 while True:
