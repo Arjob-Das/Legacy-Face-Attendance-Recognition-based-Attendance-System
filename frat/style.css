@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+.my-btn {
+    display: inline-block;
+    background-color: #4CAF50; /* Green background color */
+    border: none; /* Remove button borders */
+    color: white; /* Text color */
+    margin: 20px;
+    padding: 10px 20px; /* Add some padding */
+    text-align: center; /* Center the text */
+    text-decoration: none; /* Remove underline from link */
+    font-size: 16px; /* Set font size */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3); /* Add shadow */
+  }
+  
+  .my-btn:hover {
+    background-color: #3e8e41; /* Darker green background color on hover */
+  }
+  

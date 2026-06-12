@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: 'Lato', sans-serif;
+}
+
+.outerbox{
+    width:auto;
+    height: auto;
+    margin: 0 auto;
+    background: linear-gradient(to top left, #2fb4e4,#91bef4);
+}
+
+.innerbox{
+    width: 400px;
+    margin: 0 auto;
+    position: relative;
+  
+    padding: 20px 40px;
+    background: linear-gradient(to top right, #ffffffff,#ffffff33);
+    backdrop-filter: blur(8px);
+    box-shadow: 5px 5px 8px #2773a5;
+    z-index: 2;
+}
+.stu-header h3{
+    font-size: 2.5rem;
+    color: #212121;
+}
+
+.stu-header p{
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.stu-body{
+    margin: 20px 0;
+}
+
+.stu-body p{
+    margin: 15px 0;
+}
+
+.stu-body p label{
+    display: block;
+    font-weight: bold;
+}
+.stu-body p input{
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #cccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 4px;
+}
+
+.stu-body p input[type="submit"]{
+    background-color: #3498db;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.stu-body p input[type="submit"]:hover{
+    background-color: #2773a5;
+}
+
+.stu-body p input[type="button"]{
+    background-color: #8d34db;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.stu-body p input[type="button"]:hover{
+    background-color: #2773a5;
+}
+
+
+.circle{
+    width: 200px;
+    height: 200px;
+    border-radius: 100px;
+    background: linear-gradient(to top right, #ffffff33, #ffffffff);
+    position: absolute;
+}
+
+.c1{
+    top: 100px;
+    left: 40px;
+}
+.c2{
+    bottom: 100px;
+    right: 30px;
+}

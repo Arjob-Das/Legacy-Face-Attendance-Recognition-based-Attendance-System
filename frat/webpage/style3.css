@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+  }
+  body{
+    
+    background-image: url('texture.jpeg');
+    background-repeat: repeat;
+    background-position: center;
+    border-radius: 50%;
+    font-family: monospace;
+    font-size: large;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: rgb(2, 2, 2);
+    font-family:'Times New Roman', Times, serif;
+  }
+.my-btn {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  background-color: #4b60e7;
+  color: white;
+  }
+  
+.my-btn:hover {
+    background-color: #5b3e8e; /* Darker green background color on hover */
+  }
